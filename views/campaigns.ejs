@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Details</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(to right, #ff5f6d, #ffc371);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background: #00c6ff;
+            background: linear-gradient(to right, #0072ff, #00c6ff);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .button:hover {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            transform: scale(1.1);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #0072ff;
+            color: #fff;
+        }
+
+        td {
+            background: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Campaign Details</h1>
+        <button class="button" onclick="fetchCampaigns()">Get Campaigns</button>
+        <table id="campaigns-table">
+            <thead>
+                <tr>
+                    <th>Campaign ID</th>
+                    <th>Name</th>
+                    <th>Bidding Strategy</th>
+                    <th>Budget</th>
+                    <th>Cost</th>
+                    <th>Clicks</th>
+                    <th>Impressions</th>
+                    <th>Conversions</th>
+                    <th>Status</th>
+                    <th>Advert Channel Type</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function fetchCampaigns() {
+            let serverURL = "http://localhost:4200"
+            // const urlParams = new URLSearchParams(window.location.search);
+            const pathParts = window.location.pathname.split('/');
+            const customerId = pathParts[pathParts.length - 1];
+            console.log({ customerId });
+            if (!customerId) {
+                alert('No customer ID found.');
+                return;
+            }
+
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                alert('No refresh token found. Please authenticate first.');
+                return;
+            }
+
+            fetch(`${serverURL}/campaigns_metrics/${customerId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ refreshToken })
+            })
+                .then(async response => {
+                    if (response.status === 400) {
+                        err = await response.json()
+                        console.log({ err });
+                        return alert(err.message);
+                    }
+                    return response.json()
+                }
+                )
+                .then((data) => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        console.log({ data });
+                        if(data.length == 0){
+                            return alert("NO CAMPAIGN NA")
+                        }
+                        return displayCampaigns(data);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayCampaigns(campaigns) {
+            const tableBody = document.querySelector('#campaigns-table tbody');
+            tableBody.innerHTML = '';
+            campaigns.forEach(campaign => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${campaign.campaign.id}</td>
+                    <td>${campaign.campaign.name}</td>
+                    <td>${campaign.campaign.biddingStrategyType}</td>
+                    <td>${(campaign?.campaignBudget?.amountMicros / 1000000)?.toFixed(2) || "undefined"}</td>
+                    <td>${(campaign.metrics.costMicros / 1000000).toFixed(2)}</td>
+                    <td>${campaign.metrics.clicks}</td>
+                    <td>${campaign.metrics.impressions}</td>
+                    <td>${campaign.metrics.conversions}</td>
+                    <td>${campaign.campaign.status}</td>
+                    <td>${campaign.campaign.advertisingChannelType}</td>
+                    
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+
+</html>

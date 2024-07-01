@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ads Metrics Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        .button {
+            background: #ff4b1f;
+            background: linear-gradient(to right, #ff9068, #ff4b1f);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin: 10px;
+        }
+        .button:hover {
+            background: linear-gradient(to right, #ff4b1f, #ff9068);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Ads Metrics Dashboard</h1>
+        <div class="button-group">
+            <form action="/auth" method="get" style="display: inline;">
+                <button class="button" type="submit">Authenticate</button>
+            </form>
+            <form action="/customers" method="get" style="display: inline;">
+                <button class="button" type="submit">Customers</button>
+            </form>
+            <form action="/campaigns" method="get" style="display: inline;">
+                <button class="button" type="submit">Campaigns</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

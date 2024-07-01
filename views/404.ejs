@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(to right, #ff5f6d, #ffc371);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: neon 1.5s infinite alternate;
+        }
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .button {
+            background: #00c6ff;
+            background: linear-gradient(to right, #0072ff, #00c6ff);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s ease;
+        }
+        .button:hover {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            transform: scale(1.1);
+        }
+        @keyframes neon {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff, 0 0 60px #ff00ff, 0 0 70px #ff00ff;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+            }
+        }
+        .fun-emoji {
+            font-size: 3em;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <h2>Oops! Page Not Found</h2>
+        <div class="fun-emoji">😜💥🚀</div>
+        <p class="message">It looks like you've taken a wrong turn. Don't worry, it happens to the best of us!</p>
+        <a href="/">
+            <button class="button">Go Back Home</button>
+        </a>
+    </div>
+</body>
+</html>
