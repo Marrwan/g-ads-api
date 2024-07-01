@@ -4,8 +4,8 @@ const { OAuth2Client } = require('google-auth-library');
 const { clientId, clientSecret, redirectUri } = require('../config/env.config');
 
 const { google } = require('googleapis');
-const { PrismaClient } = require('@prisma/client');
-let prisma = new PrismaClient()
+// const { PrismaClient } = require('@prisma/client');
+// let prisma = new PrismaClient()
 // const oauth2Client = new google.auth.OAuth2(
 //     clientId,
 //     clientSecret,
@@ -44,16 +44,17 @@ const authCallback = async (code) => {
     
     console.log({ email });
     // Save user details in the database
-    const user = await prisma.user.upsert({
-        where: { email },
-        update: { refreshToken: tokens.refresh_token, accessToken: tokens.access_token },
-        create: {
-            email,
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token,
+    user = email
+    // const user = await prisma.user.upsert({
+    //     where: { email },
+    //     update: { refreshToken: tokens.refresh_token, accessToken: tokens.access_token },
+    //     create: {
+    //         email,
+    //         accessToken: tokens.access_token,
+    //         refreshToken: tokens.refresh_token,
 
-        },
-    });
+    //     },
+    // });
     return { tokens, user }
 }
 
