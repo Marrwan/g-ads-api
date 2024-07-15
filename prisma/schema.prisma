@@ -8,17 +8,19 @@ datasource db {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  email         String         @unique
-  accessToken            String    
-  refreshToken     String
+  id                  String        @unique @id
+  email               String?     @unique
+  accessToken         String?     @unique @db.Text
+  refreshToken        String?
+  defaultAccount     String?
   accessibleCustomers Customer[]
 }
 
 model Customer {
-  id         Int    @id @default(autoincrement())
-  customerId String
-  customerString String
-  userId     Int
-  user       User   @relation(fields: [userId], references: [id])
+  id             Int     @id @default(autoincrement())
+  customerId     String  @unique
+  customerString String  @unique
+  userId         String
+  user           User    @relation(fields: [userId], references: [id])
+  default        Boolean @default(false)
 }
