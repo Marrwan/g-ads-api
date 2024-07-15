@@ -27,10 +27,7 @@
 ### 8. API Library:
    - Enable the Google Ads API in the [API Library](https://console.cloud.google.com/apis/library) in the Google Cloud Console.
 
-### 9. Service Account (Optional):
-   - For server-to-server authentication, you can create a service account in the [Service Accounts page](https://console.cloud.google.com/iam-admin/serviceaccounts) and generate a key.
-
-### 10. Environment Configuration:
+### 9. Environment Configuration:
    - Store your credentials securely, and configure your environment variables with the following:
      - `CLIENT_ID`
      - `CLIENT_SECRET`
