@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Default Account</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(to right, #ff5f6d, #ffc371);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background: #00c6ff;
+            background: linear-gradient(to right, #0072ff, #00c6ff);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .button:hover {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            transform: scale(1.1);
+        }
+
+        .spinner {
+            display: none;
+            margin: 0 auto;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #0072ff;
+            color: #fff;
+        }
+
+        td {
+            background: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Select Default Account</h1>
+        <button class="button" onclick="fetchAccounts()">Get Ads Accounts</button>
+        <table id="accounts-table">
+            <thead>
+                <tr>
+                    <th>Customer Resource Name</th>
+                    <th>Customer Name</th>
+                    <th>Currency</th>
+                    <th>Time Zone</th>
+                    <th>Set Default</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="spinner" id="spinner"></div>
+    </div>
+
+    <script>
+        function fetchAccounts() {
+            let serverURL = "https://g-ads-api.onrender.com";
+            const refreshToken = localStorage.getItem('refreshToken');
+            const email = localStorage.getItem('email');
+            const pathParts = window.location.pathname.split('/');
+            const customerId = pathParts[pathParts.length - 1];
+            console.log({ customerId });
+            
+
+            fetch(`/handle_ads_request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, account_id:customerId, type: "queryCustomers" })
+            })
+                .then(async response => {
+                    if (response.status === 400) {
+                        const err = await response.json();
+                        console.log({ err });
+                        return alert(err.message);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        console.log({ data });
+                        if (data.length === 0) {
+                            return alert("No accounts found");
+                        }
+                        displayAccounts(data.customers);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayAccounts(accounts) {
+            const tableBody = document.querySelector('#accounts-table tbody');
+            tableBody.innerHTML = '';
+            accounts.forEach(account => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${account.customer.resourceName}</td>
+                    <td>${account.customer.descriptiveName}</td>
+                    <td>${account.customer.currencyCode}</td>
+                    <td>${account.customer.timeZone}</td>
+                    <td><button class="button" onclick="setDefaultAccount('${account.customer.resourceName}')">Set Default</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function setDefaultAccount(resourceName) {
+            const spinner = document.getElementById('spinner');
+            spinner.style.display = 'block';
+            const email = localStorage.getItem('email');
+            fetch(`${serverURL}/set_default_account`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, resourceName, })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    spinner.style.display = 'none';
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert('Default account set successfully!');
+                    }
+                })
+                .catch(error => {
+                    spinner.style.display = 'none';
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        }
+    </script>
+</body>
+
+</html>

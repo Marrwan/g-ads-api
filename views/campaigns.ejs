@@ -109,17 +109,18 @@
             }
 
             const refreshToken = localStorage.getItem('refreshToken');
+            const email = localStorage.getItem('email');
             if (!refreshToken) {
                 alert('No refresh token found. Please authenticate first.');
                 return;
             }
 
-            fetch(`${serverURL}/campaigns_metrics/${customerId}`, {
+            fetch(`/handle_ads_request`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ refreshToken })
+                body: JSON.stringify({ email, account_id: customerId, query: "getCampaignMetrics" })
             })
                 .then(async response => {
                     if (response.status === 400) {
@@ -132,10 +133,12 @@
                 )
                 .then((data) => {
                     if (data.error) {
+                        // console.log({data});
+                        // alert("BABA")
                         alert(data.error);
                     } else {
                         console.log({ data });
-                        if(data.length == 0){
+                        if (data.length == 0) {
                             return alert("NO CAMPAIGN NA")
                         }
                         return displayCampaigns(data);
@@ -147,6 +150,7 @@
         function displayCampaigns(campaigns) {
             const tableBody = document.querySelector('#campaigns-table tbody');
             tableBody.innerHTML = '';
+            campaigns = campaigns.metrics
             campaigns.forEach(campaign => {
                 const row = document.createElement('tr');
                 row.innerHTML = `

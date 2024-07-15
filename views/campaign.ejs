@@ -90,17 +90,18 @@
             }
 
             const refreshToken = localStorage.getItem('refreshToken');
+            const email = localStorage.getItem('email');
             if (!refreshToken) {
                 alert('No refresh token found. Please authenticate first.');
                 return;
             }
             
-            fetch(`/campaigns_metrics/${customerId}`, {
+            fetch(`/handle_ads_request`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ refreshToken })
+                body: JSON.stringify({ email })
             })
             .then(response => response.json())
             .then(data => {
