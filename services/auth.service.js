@@ -31,7 +31,6 @@ const authenticate = async (id) => {
         prompt: 'consent',
         state: id
     });
-    // console.log('Please go to this url and authorize:', authUrl);
     return authUrl;
 }
 

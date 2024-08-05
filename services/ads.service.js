@@ -1,4 +1,4 @@
-const { listAccessibleCustomers, selectDefault } = require("../utils/get_customer.utils");
+const { listAccessibleCustomers, selectDefault, getUserAdsAccount } = require("../utils/get_customer.utils");
 const {  queryCustomers, handleQuery } = require("../utils/get_ads_data.utils");
 const { get_user_refresh_token } = require("../utils/user_utils");
 const { getAccessToken } = require("../utils/get_client.utils");
@@ -67,8 +67,14 @@ const handleRequestQuery = async(email, account_id, query) => {
     return {data, error}
 }
 
-const setDefaultAccount = async(email, account_id)=> {
-    await selectDefault(email, account_id);
-    return;
+const setDefaultAccount = async(user_id, account_id)=> {
+    let {user, error} = await selectDefault(user_id, account_id);
+    return {user, error};
 }
-module.exports = { listCustomers,  queryListCustomers, handleRequestQuery, setDefaultAccount}
+
+const getAdsAccount = async(user_id) => {
+    let {accounts, error} = await getUserAdsAccount(user_id);
+
+    return {accounts, error}
+}
+module.exports = { listCustomers,  queryListCustomers, handleRequestQuery, setDefaultAccount, getAdsAccount}

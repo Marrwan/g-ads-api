@@ -3,14 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id                  String        @unique @id
   email               String?     @unique
-  accessToken         String?     @unique @db.Text
+  accessToken         String?     @db.Text
   refreshToken        String?
   defaultAccount     String?
   accessibleCustomers Customer[]

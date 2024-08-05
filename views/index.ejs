@@ -67,12 +67,12 @@
     document.addEventListener('DOMContentLoaded', () => {
         const authForm = document.getElementById('authForm');
 
-        authForm.action = `/auth?id=${uuid}`;
+        authForm.action = `/auth?user_id=${uuid}`;
         document.getElementById('uuid').innerText = `Your UUID ${uuid}`;
     });
     function setAuthUrlWithUUID() {
 
-        window.location.href = `/auth?id=${uuid}`;
+        window.location.href = `/auth?user_id=${uuid}`;
     }
 </script>
 

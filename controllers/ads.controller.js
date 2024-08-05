@@ -1,7 +1,7 @@
-const { listCustomers, queryListCustomers, handleRequestQuery, setDefaultAccount } = require("../services/ads.service");
+const { listCustomers, queryListCustomers, handleRequestQuery, setDefaultAccount, getAdsAccount } = require("../services/ads.service");
 const { getAccessToken } = require("../utils/get_client.utils");
-const { createCustomers, selectDefault } = require("../utils/get_customer.utils");
-const { get_user_refresh_token, get_user_by_email, get_user_by_id } = require("../utils/user_utils");
+const { createCustomers } = require("../utils/get_customer.utils");
+const { get_user_by_id } = require("../utils/user_utils");
 
 const handleRequest = async (req, res) => {
     let error = null;
@@ -9,18 +9,18 @@ const handleRequest = async (req, res) => {
     let data = null;
     let user;
     let account_id;
-    const { id, query, type } = req.body;
-   
-    if (!id) {
+    const { user_id, query, type } = req.body;
+
+    if (!user_id) {
         return res.status(400).json({ message: "ID of the user is required" });
     }
 
-    ({ user, error } = await get_user_by_id(id));
-    if(!user){
+    ({ user, error } = await get_user_by_id(user_id));
+    if (!user) {
         return res.status(400).json({ message: "User not found" });
     }
-    let email = user.email;  
-   
+    let email = user.email;
+
     if (type == "listAccounts") {
         ({ customers, error } = await listCustomers(email));
         if (error) {
@@ -30,26 +30,26 @@ const handleRequest = async (req, res) => {
         return res.json({ customers });
     }
     else if (type == "queryCustomers") {
-        ({account_id} = req.body)
+        ({ account_id } = req.body)
         if (!account_id) {
             return res.status(400).json({ message: "Account ID is required" });
         }
         ({ customers, error } = await queryListCustomers(email, account_id));
         if (error) {
             return res.status(400).json({ message: error })
-        } 
+        }
         return res.json({ customers });
     }
-    account_id = user.defaultAccount; 
+    account_id = user.defaultAccount;
     console.log({ email, query, account_id, type });
     if (!account_id) {
-        return res.status(400).json({ message: "Default account not set"})
+        return res.status(400).json({ message: "Default account not set" })
     }
-    
+
     if (!query) {
         return res.status(400).json({ message: "Query is required" });
     }
-        ({ data, error } = await handleRequestQuery(email, account_id, query));
+    ({ data, error } = await handleRequestQuery(email, account_id, query));
     if (error) {
         return res.status(400).json({ message: error });
     }
@@ -82,16 +82,28 @@ const getCustomers = async (req, res) => {
 }
 
 const defaultAccountHandler = async (req, res) => {
-    const { email, account_id } = req.body;
+    const { user_id, account_id } = req.body;
     if (!account_id) {
-        console.log("No acc");
         return res.status(400).json({ message: "Account ID is required" })
     }
-    if (!email) {
-        return res.status(400).json({ message: "Email is required" })
+    if (!user_id) {
+        return res.status(400).json({ message: "User ID is required" })
     }
-    await setDefaultAccount(email, account_id);
-
+    let { user, error } = await setDefaultAccount(user_id, account_id);
+    if (error) {
+        return res.status(400).json({ message: error })
+    }
     return res.json({ message: "Default account set successfully" })
 }
-module.exports = { getCustomers, handleRequest, defaultAccountHandler } 
+
+const getAccounts = async (req, res) => {
+    const { user_id } = req.params;
+    const { accounts, error } = await getAdsAccount(user_id);
+    if (error) {
+        return res.status(400).json({ message: error });
+    }
+    return res.json({ accounts });
+
+};
+
+module.exports = { getCustomers, handleRequest, defaultAccountHandler, getAccounts } 

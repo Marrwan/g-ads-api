@@ -67,6 +67,7 @@ const createCustomers = async (email, customers) => {
     if (!user) {
         throw new Error('User not found');
     }
+    console.log("FROM CREATE", {customers});
     customers.forEach(async customer => {
         let customerString = customer;
         let customerId = customer.split('/')[1];
@@ -87,14 +88,23 @@ const createCustomers = async (email, customers) => {
 
 };
 
-const selectDefault = async (email, account_id) => {
-    let user = await prisma.user.update({where:{email}, data:{
+const selectDefault = async (id, account_id) => {
+    let user = await prisma.user.update({where:{id}, data:{
         defaultAccount: account_id
     }})
-
-    return;
+    if(user){
+        return {user, error: null}
+    }
+    return {user, error: "User not found"};
 }
 
+const getUserAdsAccount = async(userId) => {
+ 
+    let accounts = await prisma.customer.findUnique({where: {userId}})
+    if(accounts){
+        return {accounts, error:null};
+    }
+    return {accounts: [], error: "User not found"}
+}
 
-
-module.exports = { getCustomer, listAccessibleCustomers, createCustomers, selectDefault }
+module.exports = { getCustomer, listAccessibleCustomers, createCustomers, selectDefault, getUserAdsAccount}

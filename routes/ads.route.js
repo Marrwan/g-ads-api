@@ -1,5 +1,5 @@
 const express = require('express');
-const { getCustomers, handleRequest, defaultAccountHandler } = require('../controllers/ads.controller');
+const { getCustomers, handleRequest, defaultAccountHandler, getAccounts } = require('../controllers/ads.controller');
 
 const router = express.Router();
 
@@ -11,5 +11,5 @@ router.get("/customers/:customerId", (req,res)=> res.render("customers"))
 router.post("/set_default_account", defaultAccountHandler)
 router.post("/handle_ads_request", handleRequest)
 router.get("/redirect",  (req,res)=> res.send("WELCOME BACK TO CENTRAL SERVER "))
-
+router.get('/get_accounts/:user_id', getAccounts)
 module.exports = router;
